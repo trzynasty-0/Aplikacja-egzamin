@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
     private Button polub, zapisz, usun;
     private TextView polubienia;
+    private Boolean czyZapisano = false;
     private int iloscPolubien = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +35,24 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState != null){
             iloscPolubien =  savedInstanceState.getInt("wartoscZapisanychPolubien");
+            czyZapisano =  savedInstanceState.getBoolean("CZYZAPISANO");
             polubienia.setText(iloscPolubien + " polubień");
 
         }
+        zapisz.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        czyZapisano = true;
 
+                    }
+                }
+        );
         usun.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(iloscPolubien > 0){
+                        if(iloscPolubien > 0 && !czyZapisano){
                             iloscPolubien--;
                             polubienia.setText(iloscPolubien + " polubień");
                         }
@@ -55,8 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        iloscPolubien++;
-                        polubienia.setText(iloscPolubien + " polubień");
+                        if(!czyZapisano){
+                            iloscPolubien++;
+                            polubienia.setText(iloscPolubien + " polubień");
+                        }
+
                     }
                 }
         );
@@ -66,7 +79,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("wartoscZapisanychPolubien", iloscPolubien);
+        if(czyZapisano){
+            outState.putInt("wartoscZapisanychPolubien", iloscPolubien);
+            outState.putBoolean("CZYZAPISANO", czyZapisano);
+        }
     }
 
 
